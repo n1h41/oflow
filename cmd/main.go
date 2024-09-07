@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import "n1h41/oflow/internal/server"
 
 func main() {
-	fmt.Println("Hello world")
+
+  fiberServer := server.NewFiberServer()
+  fiberServer.Run()
 }
