@@ -1,0 +1,10 @@
+server:
+  port: 3000
+
+db:
+  port: 5432
+  dbname: "oflow_db"
+  dbuser: "n1h41"
+  dbpassword: "nihal@23ktu"
+  dbhost: "db"
+  dbsslmode: "disable"
