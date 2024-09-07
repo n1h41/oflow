@@ -2,9 +2,9 @@ package server
 
 import (
 	"log"
+	"n1h41/oflow/internal/delivery/http/route"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/favicon"
 )
 
 type FiberServer struct{}
@@ -15,7 +15,9 @@ func NewFiberServer() Server {
 
 func (f *FiberServer) Run() {
 	app := fiber.New()
-	app.Use(favicon.New())
-	// route.RegisterRoutes(app)
+
+	// INFO: Attach routes to handlers
+	route.SetupRoutes(app)
+
 	log.Fatal(app.Listen(":3000"))
 }
