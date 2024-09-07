@@ -1,17 +1,25 @@
 package repository
 
-import "n1h41/oflow/internal/model"
+import (
+	"n1h41/oflow/internal/model"
+
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+)
 
 type UserRepo interface {
-	CreateUser(*model.CreatUserModel)
+	CreateUser(*model.CreatUserModel) error
 }
 
-type userRepo struct{}
-
-func NewUserRepo() UserRepo {
-	return &userRepo{}
+type userRepo struct {
+	userIdentityPoolClient *cognitoidentityprovider.Client
 }
 
-func (u *userRepo) CreateUser(*model.CreatUserModel) {
-	panic("unimplemented create user")
+func NewUserRepo(userIdentityPoolClient *cognitoidentityprovider.Client) UserRepo {
+	return userRepo{
+		userIdentityPoolClient: userIdentityPoolClient,
+	}
+}
+
+func (u userRepo) CreateUser(*model.CreatUserModel) error {
+	return nil
 }

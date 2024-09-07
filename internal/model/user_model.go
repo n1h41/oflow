@@ -1,9 +1,9 @@
 package model
 
 type CreatUserModel struct {
-	Email     string
-	FirstName string
-	LastName  string
-	Phone     string
-	Password  string
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Phone     string `json:"phone"`
+	Password  string `json:"password"`
 }
