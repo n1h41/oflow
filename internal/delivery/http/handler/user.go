@@ -28,12 +28,12 @@ func (h userHandler) SignUpUser(c *fiber.Ctx) error {
 		log.Println(err)
 		return err
 	} // TODO:
-	result, err := h.userRepo.SignUpUser(&params, c.Context())
+	/* result, err := h.userRepo.SignUpUser(&params, c.Context())
 	if err != nil {
 		return err
-	}
+	} */
 	return c.JSON(fiber.Map{
-		"message": result,
+		"message": params,
 		"status":  true,
 	})
 }
