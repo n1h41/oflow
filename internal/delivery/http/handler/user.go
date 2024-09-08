@@ -1,25 +1,39 @@
 package handler
 
 import (
+	"log"
+	"n1h41/oflow/internal/model"
 	"n1h41/oflow/internal/repository"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler interface {
-	CreateUser(ctx *fiber.Ctx) error
+	SignUpUser(c *fiber.Ctx) error
 }
 
 type userHandler struct {
-	userRepo *repository.UserRepo
+	userRepo repository.UserRepo
 }
 
-func NewUseHandler(userRepo *repository.UserRepo) UserHandler {
+func NewUseHandler(userRepo repository.UserRepo) UserHandler {
 	return &userHandler{
 		userRepo: userRepo,
 	}
 }
 
-func (h *userHandler) CreateUser(ctx *fiber.Ctx) error {
-	panic("unimplemented Create User handler")
+func (h userHandler) SignUpUser(c *fiber.Ctx) error {
+	var params model.CreateUserModelReq
+	if err := c.BodyParser(&params); err != nil {
+		log.Println(err)
+		return err
+	} // TODO:
+	/* result, err := h.userRepo.SignUpUser(&params, c.Context())
+	if err != nil {
+		return err
+	} */
+	return c.JSON(fiber.Map{
+		"message": params,
+		"status":  true,
+	})
 }
