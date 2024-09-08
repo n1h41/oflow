@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"n1h41/oflow/internal/model"
 	"n1h41/oflow/internal/repository"
 
@@ -8,7 +9,7 @@ import (
 )
 
 type UserHandler interface {
-	CreateUser(ctx *fiber.Ctx) error
+	SignUpUser(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -21,13 +22,18 @@ func NewUseHandler(userRepo repository.UserRepo) UserHandler {
 	}
 }
 
-func (h userHandler) CreateUser(ctx *fiber.Ctx) error {
-	var params *model.CreatUserModel
-	if err := ctx.BodyParser(params); err != nil {
+func (h userHandler) SignUpUser(c *fiber.Ctx) error {
+	var params model.CreateUserModelReq
+	if err := c.BodyParser(&params); err != nil {
+		log.Println(err)
+		return err
+	} // TODO:
+	result, err := h.userRepo.SignUpUser(&params, c.Context())
+	if err != nil {
 		return err
 	}
-	if err := h.userRepo.CreateUser(params); err != nil {
-		return err
-	}
-	return ctx.JSON(fiber.Map{"message": "User created"})
+	return c.JSON(fiber.Map{
+		"message": result,
+		"status":  true,
+	})
 }
