@@ -16,6 +16,7 @@ func NewFiberServer() Server {
 
 func (f *FiberServer) Run() {
 	app := fiber.New(fiber.Config{
+		// INFO: Setup default fiber error response
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			return c.Status(fiber.StatusBadRequest).JSON(model.GlobalErrorHandlerResp{
 				Success: false,
