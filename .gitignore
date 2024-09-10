@@ -1,2 +1,3 @@
 build/oflow-server
 config.yaml
+.env
