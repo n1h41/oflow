@@ -1,6 +1,7 @@
 package route
 
 import (
+	"n1h41/oflow/config"
 	"n1h41/oflow/internal/delivery/http/handler"
 	"n1h41/oflow/internal/infrastructure/aws"
 	"n1h41/oflow/internal/repository"
@@ -9,12 +10,14 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
-	userIdentityPoolClient, err := aws.GetUserIdentityClient()
-  if err != nil {
-    panic(err)
-  }
+	config := config.Setup()
 
-	userRepo := repository.NewUserRepo(userIdentityPoolClient)
+	userIdentityPoolClient, err := aws.GetUserIdentityClient()
+	if err != nil {
+		panic(err)
+	}
+
+	userRepo := repository.NewUserRepo(userIdentityPoolClient, config.AWS.ClientId)
 	userHandler := handler.NewUseHandler(userRepo)
 
 	authGroup := app.Group("/auth")

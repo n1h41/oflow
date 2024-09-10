@@ -19,15 +19,20 @@ type Db struct {
 	DbSslmode  string
 }
 
+type AWS struct {
+	ClientId string
+}
+
 type Config struct {
 	Server *Server
 	Db     *Db
+	AWS    *AWS
 }
 
 var once sync.Once
 var configInstance *Config
 
-func Setup() {
+func Setup() *Config {
 	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
@@ -42,4 +47,5 @@ func Setup() {
 	if err := viper.Unmarshal(&configInstance); err != nil {
 		panic(err)
 	}
+	return configInstance
 }

@@ -16,11 +16,13 @@ type UserRepo interface {
 
 type userRepo struct {
 	userIdentityPoolClient *cognitoidentityprovider.Client
+	clientId               string
 }
 
-func NewUserRepo(userIdentityPoolClient *cognitoidentityprovider.Client) UserRepo {
+func NewUserRepo(userIdentityPoolClient *cognitoidentityprovider.Client, clientId string) UserRepo {
 	return userRepo{
 		userIdentityPoolClient: userIdentityPoolClient,
+		clientId:               clientId,
 	}
 }
 
@@ -42,11 +44,11 @@ func (repo userRepo) SignUpUser(reqParam *model.SignUpUserReq, ctx context.Conte
 		Name:  aws.String("Phone"),
 		Value: &reqParam.Phone,
 	})
-	// TODO: Need to add the ID of the client associated with the user pool
 	result, err := repo.userIdentityPoolClient.SignUp(ctx, &cognitoidentityprovider.SignUpInput{
 		Username:       &reqParam.Email,
 		Password:       &reqParam.Password,
 		UserAttributes: userAttributes,
+		ClientId:       aws.String(repo.clientId),
 	})
 	if err != nil {
 		return nil, err
@@ -55,9 +57,16 @@ func (repo userRepo) SignUpUser(reqParam *model.SignUpUserReq, ctx context.Conte
 }
 
 func (repo userRepo) LoginUser(params *model.SignInUserReq, ctx context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error) {
-	repo.userIdentityPoolClient.InitiateAuth(ctx, &cognitoidentityprovider.InitiateAuthInput{
-		AuthFlow: types.AuthFlowType("USER_PASSWORD_AUTH"),
-		ClientId: aws.String(""), // TODO:
+	authParams := make(map[string]string)
+	authParams["USERNAME"] = params.Email
+	authParams["PASSWORD"] = params.Password
+	result, err := repo.userIdentityPoolClient.InitiateAuth(ctx, &cognitoidentityprovider.InitiateAuthInput{
+		AuthFlow:       types.AuthFlowType("USER_PASSWORD_AUTH"),
+		ClientId:       aws.String(repo.clientId),
+		AuthParameters: authParams,
 	})
-	panic("unimplemented")
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }
