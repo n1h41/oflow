@@ -23,7 +23,7 @@ func NewUseHandler(userRepo repository.UserRepo) UserHandler {
 }
 
 func (h userHandler) SignUpUser(c *fiber.Ctx) error {
-	var params model.CreateUserModelReq
+	var params model.SignUpUserReq
 	if err := c.BodyParser(&params); err != nil {
 		log.Println(err)
 		return err

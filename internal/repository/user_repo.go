@@ -10,7 +10,8 @@ import (
 )
 
 type UserRepo interface {
-	SignUpUser(*model.CreateUserModelReq, context.Context) (*cognitoidentityprovider.SignUpOutput, error)
+	SignUpUser(*model.SignUpUserReq, context.Context) (*cognitoidentityprovider.SignUpOutput, error)
+	LoginUser(*model.SignInUserReq, context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error)
 }
 
 type userRepo struct {
@@ -23,7 +24,7 @@ func NewUserRepo(userIdentityPoolClient *cognitoidentityprovider.Client) UserRep
 	}
 }
 
-func (repo userRepo) SignUpUser(reqParam *model.CreateUserModelReq, ctx context.Context) (*cognitoidentityprovider.SignUpOutput, error) {
+func (repo userRepo) SignUpUser(reqParam *model.SignUpUserReq, ctx context.Context) (*cognitoidentityprovider.SignUpOutput, error) {
 	var userAttributes []types.AttributeType
 	userAttributes = append(userAttributes, types.AttributeType{
 		Name:  aws.String("Email"),
@@ -51,4 +52,12 @@ func (repo userRepo) SignUpUser(reqParam *model.CreateUserModelReq, ctx context.
 		return nil, err
 	}
 	return result, nil
+}
+
+func (repo userRepo) LoginUser(params *model.SignInUserReq, ctx context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error) {
+	repo.userIdentityPoolClient.InitiateAuth(ctx, &cognitoidentityprovider.InitiateAuthInput{
+		AuthFlow: types.AuthFlowType("USER_PASSWORD_AUTH"),
+		ClientId: aws.String(""), // TODO:
+	})
+	panic("unimplemented")
 }
