@@ -17,7 +17,7 @@ func SetupRoutes(app *fiber.App) {
 		panic(err)
 	}
 
-	userRepo := repository.NewUserRepo(userIdentityPoolClient, config.AWS.ClientId)
+	userRepo := repository.NewUserRepo(userIdentityPoolClient, config.AWS.ClientId, config.AWS.ClientSecret)
 	userHandler := handler.NewUseHandler(userRepo)
 
 	authGroup := app.Group("/auth")
