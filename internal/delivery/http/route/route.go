@@ -22,4 +22,5 @@ func SetupRoutes(app *fiber.App) {
 
 	authGroup := app.Group("/auth")
 	authGroup.Post("/sign-up", userHandler.SignUpUser)
+	authGroup.Post("/confirm-user", userHandler.ConfirmUser)
 }
