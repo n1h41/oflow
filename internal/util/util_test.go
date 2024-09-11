@@ -5,6 +5,6 @@ import "testing"
 func TestGenerateHMACHash(t *testing.T) {
 	secret := "nihal"
 	payload := "meowmeow"
-	hash := GenerateHMACHash(payload, secret)
+	hash := GenerateHmacSHA256Hash(payload, secret)
 	t.Log(hash)
 }
