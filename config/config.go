@@ -20,7 +20,8 @@ type Db struct {
 }
 
 type AWS struct {
-	ClientId string
+	ClientId     string
+	ClientSecret string
 }
 
 type Config struct {
