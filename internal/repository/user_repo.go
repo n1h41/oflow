@@ -77,8 +77,11 @@ func (repo userRepo) ConfirmUser(reqParam *model.ConfirmUserReq, ctx context.Con
 
 func (repo userRepo) LoginUser(reqParam *model.SignInUserReq, ctx context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error) {
 	authParams := make(map[string]string)
-	authParams["username"] = reqParam.Email
-	authParams["password"] = reqParam.Password
+	hash := util.GenerateHmacSHA256Hash(reqParam.Email+repo.clientId, repo.clientSecret)
+	encodedSecretHash := base64.StdEncoding.EncodeToString(hash)
+	authParams["USERNAME"] = reqParam.Email
+	authParams["PASSWORD"] = reqParam.Password
+	authParams["SECRET_HASH"] = encodedSecretHash
 	result, err := repo.cognitoIdentityProvider.InitiateAuth(ctx, &cognitoidentityprovider.InitiateAuthInput{
 		AuthFlow:       types.AuthFlowType("USER_PASSWORD_AUTH"),
 		ClientId:       aws.String(repo.clientId),
