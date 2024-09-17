@@ -9,6 +9,11 @@ type SignUpUserReq struct {
 }
 
 type SignInUserReq struct {
-	Email     string `json:"email" validate:"required"`
-	Password  string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+type ConfirmUserReq struct {
+	Email            string `json:"email"`
+	ConfirmationCode string `json:"confirmation_code"`
 }

@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 )
 
@@ -17,11 +18,20 @@ func getConfig() (*aws.Config, error) {
 	return &cfg, nil
 }
 
-func GetUserIdentityClient() (*cognitoidentityprovider.Client, error) {
+func GetCognitoIdentityProviderClient() (*cognitoidentityprovider.Client, error) {
 	cfg, err := getConfig()
 	if err != nil {
 		return nil, err
 	}
 	client := cognitoidentityprovider.NewFromConfig(*cfg)
+	return client, nil
+}
+
+func GetCognitoIdentityClient() (*cognitoidentity.Client, error) {
+	cfg, err := getConfig()
+	if err != nil {
+		return nil, err
+	}
+	client := cognitoidentity.NewFromConfig(*cfg)
 	return client, nil
 }

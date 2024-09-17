@@ -20,7 +20,8 @@ type Db struct {
 }
 
 type AWS struct {
-	ClientId string
+	ClientId     string
+	ClientSecret string
 }
 
 type Config struct {
@@ -36,7 +37,7 @@ func Setup() *Config {
 	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
-		viper.AddConfigPath("./")
+		viper.AddConfigPath("./config")
 		viper.AutomaticEnv()
 	})
 
