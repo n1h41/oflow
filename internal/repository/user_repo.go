@@ -7,6 +7,7 @@ import (
 	"n1h41/oflow/internal/util"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 )
@@ -15,17 +16,25 @@ type UserRepo interface {
 	SignUpUser(*model.SignUpUserReq, context.Context) (*cognitoidentityprovider.SignUpOutput, error)
 	ConfirmUser(*model.ConfirmUserReq, context.Context) (*cognitoidentityprovider.ConfirmSignUpOutput, error)
 	LoginUser(*model.SignInUserReq, context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error)
+	FetchCredentials(context.Context)
 }
 
 type userRepo struct {
 	cognitoIdentityProvider *cognitoidentityprovider.Client
+	cognitoIdentity         *cognitoidentity.Client
 	clientId                string
 	clientSecret            string
 }
 
-func NewUserRepo(userIdentityPoolClient *cognitoidentityprovider.Client, clientId string, clientSecret string) UserRepo {
+func NewUserRepo(
+	cognitoIdentityPoolClient *cognitoidentityprovider.Client,
+	cognitoIdentityClient *cognitoidentity.Client,
+	clientId string,
+	clientSecret string,
+) UserRepo {
 	return userRepo{
-		cognitoIdentityProvider: userIdentityPoolClient,
+		cognitoIdentityProvider: cognitoIdentityPoolClient,
+		cognitoIdentity:         cognitoIdentityClient,
 		clientId:                clientId,
 		clientSecret:            clientSecret,
 	}
@@ -91,4 +100,8 @@ func (repo userRepo) LoginUser(reqParam *model.SignInUserReq, ctx context.Contex
 		return nil, err
 	}
 	return result, nil
+}
+
+func (repo userRepo) FetchCredentials(context.Context) {
+	panic("unimplemented")
 }

@@ -12,12 +12,22 @@ import (
 func SetupRoutes(app *fiber.App) {
 	config := config.Setup()
 
-	userIdentityPoolClient, err := aws.GetUserIdentityClient()
+	cognitoIdentityPoolClient, err := aws.GetCognitoIdentityProviderClient()
 	if err != nil {
 		panic(err)
 	}
 
-	userRepo := repository.NewUserRepo(userIdentityPoolClient, config.AWS.ClientId, config.AWS.ClientSecret)
+	cognitoIdentityClient, err := aws.GetCognitoIdentityClient()
+	if err != nil {
+		panic(err)
+	}
+
+	userRepo := repository.NewUserRepo(
+		cognitoIdentityPoolClient,
+		cognitoIdentityClient,
+		config.AWS.ClientId,
+		config.AWS.ClientSecret,
+	)
 	userHandler := handler.NewUseHandler(userRepo)
 
 	authGroup := app.Group("/auth")
