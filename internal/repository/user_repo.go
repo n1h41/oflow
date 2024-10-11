@@ -16,7 +16,7 @@ type UserRepo interface {
 	SignUpUser(*model.SignUpUserReq, context.Context) (*cognitoidentityprovider.SignUpOutput, error)
 	ConfirmUser(*model.ConfirmUserReq, context.Context) (*cognitoidentityprovider.ConfirmSignUpOutput, error)
 	LoginUser(*model.SignInUserReq, context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error)
-	FetchCredentials(context.Context)
+	FetchCredentials(context.Context, string) (*cognitoidentity.GetCredentialsForIdentityOutput, error)
 }
 
 type userRepo struct {
@@ -102,6 +102,24 @@ func (repo userRepo) LoginUser(reqParam *model.SignInUserReq, ctx context.Contex
 	return result, nil
 }
 
-func (repo userRepo) FetchCredentials(context.Context) {
-	panic("unimplemented")
+func (repo userRepo) FetchCredentials(ctx context.Context, token string) (*cognitoidentity.GetCredentialsForIdentityOutput, error) {
+	getIdOutput, err := repo.cognitoIdentity.GetId(ctx, &cognitoidentity.GetIdInput{
+		IdentityPoolId: aws.String(""),
+		Logins: map[string]string{
+			"cognito-idp.us-east-1.amazonaws.com/us-east-1_M8b97NwO8": token,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	credentialOutput, err := repo.cognitoIdentity.GetCredentialsForIdentity(ctx, &cognitoidentity.GetCredentialsForIdentityInput{
+		IdentityId: getIdOutput.IdentityId,
+		Logins: map[string]string{
+			"cognito-idp.us-east-1.amazonaws.com/us-east-1_M8b97NwO8": token,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return credentialOutput, err
 }
