@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"n1h41/oflow/config"
 	awsConfig "n1h41/oflow/internal/infrastructure/aws"
 	"n1h41/oflow/internal/model"
 	"testing"
@@ -10,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/awsdocs/aws-doc-sdk-examples/gov2/testtools"
 )
 
@@ -18,8 +20,9 @@ func TestSignInUser(t *testing.T) {
 
 	congnitoIdentityProvider := cognitoidentityprovider.NewFromConfig(*stubber.SdkConfig)
 	cognitoIdentity := cognitoidentity.NewFromConfig(*stubber.SdkConfig)
+	dynamoDB := dynamodb.NewFromConfig(*stubber.SdkConfig)
 
-	userRepo := NewUserRepo(congnitoIdentityProvider, cognitoIdentity, "test", "test12345")
+	userRepo := NewUserRepo(congnitoIdentityProvider, cognitoIdentity, dynamoDB, "test", "test12345")
 
 	authParams := make(map[string]string)
 	authParams["USERNAME"] = "test@gmail.com"
@@ -66,7 +69,8 @@ func TestFetchCredentials(t *testing.T) {
 		return
 	}
 
-	userRepo := NewUserRepo(congnitoIdentityProvider, cognitoIdentity, "test", "test12345")
+	config := config.Setup()
+	userRepo := NewUserRepo(congnitoIdentityProvider, cognitoIdentity, nil, config.AWS.ClientId, config.AWS.ClientSecret)
 
 	loginCreds, err := userRepo.LoginUser(&model.SignInUserReq{
 		Email:    "nihalninu25@gmail.com",

@@ -12,6 +12,8 @@ type UserHandler interface {
 	SignUpUser(c *fiber.Ctx) error
 	ConfirmUser(c *fiber.Ctx) error
 	SignInUser(c *fiber.Ctx) error
+	AddDevice(c *fiber.Ctx) error
+	ListUserDevices(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -70,4 +72,25 @@ func (h *userHandler) SignInUser(c *fiber.Ctx) error {
 		"status":  true,
 		"message": result,
 	})
+}
+
+func (h *userHandler) AddDevice(c *fiber.Ctx) error {
+	var params model.AddDeviceReq
+	if err := c.BodyParser(&params); err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println(params)
+	// result, err := h.userRepo.AddDevice(c.Context(), params)
+	panic("unimplemented")
+}
+
+func (h *userHandler) ListUserDevices(c *fiber.Ctx) error {
+	var params model.ListUserDevicesReq
+	if err := c.BodyParser(&params); err != nil {
+		log.Println(err)
+		return err
+	}
+	log.Println(params)
+	panic("unimplemented")
 }

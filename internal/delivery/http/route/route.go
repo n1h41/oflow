@@ -22,9 +22,12 @@ func SetupRoutes(app *fiber.App) {
 		panic(err)
 	}
 
+	dynamoDBClient, err := aws.GetDynamoDbClient()
+
 	userRepo := repository.NewUserRepo(
 		cognitoIdentityPoolClient,
 		cognitoIdentityClient,
+		dynamoDBClient,
 		config.AWS.ClientId,
 		config.AWS.ClientSecret,
 	)
@@ -34,4 +37,7 @@ func SetupRoutes(app *fiber.App) {
 	authGroup.Post("/sign-up", userHandler.SignUpUser)
 	authGroup.Post("/confirm-user", userHandler.ConfirmUser)
 	authGroup.Post("/sign-in", userHandler.SignInUser)
+
+	deviceGroup := app.Group("/device")
+	deviceGroup.Post("/add", userHandler.AddDevice)
 }

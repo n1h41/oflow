@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
 func getConfig() (*aws.Config, error) {
@@ -33,5 +34,14 @@ func GetCognitoIdentityClient() (*cognitoidentity.Client, error) {
 		return nil, err
 	}
 	client := cognitoidentity.NewFromConfig(*cfg)
+	return client, nil
+}
+
+func GetDynamoDbClient() (*dynamodb.Client, error) {
+	cfg, err := getConfig()
+	if err != nil {
+		return nil, err
+	}
+	client := dynamodb.NewFromConfig(*cfg)
 	return client, nil
 }

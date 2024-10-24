@@ -17,3 +17,11 @@ type ConfirmUserReq struct {
 	Email            string `json:"email"`
 	ConfirmationCode string `json:"confirmation_code"`
 }
+
+type AddDeviceReq struct {
+	DeviceMAC string `json:"device_mac" validate:"required"`
+}
+
+type ListUserDevicesReq struct {
+	UserId string `json:"user_id" validate:"required"`
+}
