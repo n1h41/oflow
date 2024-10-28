@@ -6,16 +6,15 @@ services:
     volumes:
       - .:/usr/bin/app
     command: air --build.cmd "go build -o build/oflow-server cmd/main.go" --build.bin "build/oflow-server"
-
-  db:
-    env_file:
-      - .env
-    image: postgres:alpine
-    environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres-db:/var/lib/postgresql/data
+  # db:
+  #   env_file:
+  #     - .env
+  #   image: postgres:alpine
+  #   environment:
+  #     - POSTGRES_DB=${DB_NAME}
+  #     - POSTGRES_USER=${DB_USER}
+  #     - POSTGRES_PASSWORD=${DB_PASSWORD}
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - postgres-db:/var/lib/postgresql/data
