@@ -32,14 +32,16 @@ type Config struct {
 	AWS    *AWS
 }
 
-var once sync.Once
-var configInstance *Config
+var (
+	once           sync.Once
+	configInstance *Config
+)
 
 func Setup() *Config {
 	once.Do(func() {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
-		viper.AddConfigPath("../../config/")
+		viper.AddConfigPath("./config/")
 		viper.AutomaticEnv()
 	})
 

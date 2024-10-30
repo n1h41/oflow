@@ -5,6 +5,6 @@ package model
 // INFO: Responses
 
 type GlobalErrorHandlerResp struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
+	Status  bool        `json:"status"`
+	Message interface{} `json:"message"`
 }
