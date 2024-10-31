@@ -82,7 +82,7 @@ func TestFetchCredentials(t *testing.T) {
 		return
 	}
 
-	userCreds, err := userRepo.FetchCredentials(context.TODO(), *loginCreds.AuthenticationResult.IdToken)
+	userCreds, err := userRepo.FetchIdentityCredentials(context.TODO(), *loginCreds.AuthenticationResult.IdToken)
 	if err != nil {
 		t.Log(err)
 		t.Fail()

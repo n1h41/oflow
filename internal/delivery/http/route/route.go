@@ -37,6 +37,7 @@ func SetupRoutes(app *fiber.App) {
 	authGroup.Post("/sign-up", userHandler.SignUpUser)
 	authGroup.Post("/confirm-user", userHandler.ConfirmUser)
 	authGroup.Post("/sign-in", userHandler.SignInUser)
+	authGroup.Post("/fetch-identity-credentials", userHandler.FetchIdentityCredentials)
 
 	deviceGroup := app.Group("/device")
 	deviceGroup.Post("/add", userHandler.AddDevice)

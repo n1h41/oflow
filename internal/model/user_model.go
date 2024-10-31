@@ -13,6 +13,14 @@ type SignInUserReq struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type RefreshTokenReq struct {
+	RefreshToken string `json:"refresh_token" validate:"required"`
+}
+
+type FetchIdentityCredentialsReq struct {
+	Token string `json:"token" validate:"required"`
+}
+
 type ConfirmUserReq struct {
 	Email            string `json:"email"`
 	ConfirmationCode string `json:"confirmation_code"`

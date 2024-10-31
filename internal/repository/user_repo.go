@@ -18,7 +18,8 @@ type UserRepo interface {
 	SignUpUser(*model.SignUpUserReq, context.Context) (*cognitoidentityprovider.SignUpOutput, error)
 	ConfirmUser(*model.ConfirmUserReq, context.Context) (*cognitoidentityprovider.ConfirmSignUpOutput, error)
 	LoginUser(*model.SignInUserReq, context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error)
-	FetchCredentials(context.Context, string) (*cognitoidentity.GetCredentialsForIdentityOutput, error)
+	RefreshTokens(*model.RefreshTokenReq, context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error)
+	FetchIdentityCredentials(context.Context, string) (*cognitoidentity.GetCredentialsForIdentityOutput, error)
 	FetchDeviceList(*model.ListUserDevicesReq, context.Context) (*dynamodb.ScanOutput, error)
 	AddDevice(*model.AddDeviceReq, context.Context) (*dynamodb.PutItemOutput, error)
 }
@@ -109,7 +110,24 @@ func (repo userRepo) LoginUser(reqParam *model.SignInUserReq, ctx context.Contex
 	return result, nil
 }
 
-func (repo userRepo) FetchCredentials(ctx context.Context, token string) (*cognitoidentity.GetCredentialsForIdentityOutput, error) {
+func (repo userRepo) RefreshTokens(reqParam *model.RefreshTokenReq, ctx context.Context) (*cognitoidentityprovider.InitiateAuthOutput, error) {
+	authParams := make(map[string]string)
+	hash := util.GenerateHmacSHA256Hash(reqParam.RefreshToken+repo.clientId, repo.clientSecret)
+	encodedSecretHash := base64.StdEncoding.EncodeToString(hash)
+	authParams["REFRESH_TOKEN"] = reqParam.RefreshToken
+	authParams["SECRET_HASH"] = encodedSecretHash
+	result, err := repo.cognitoIdentityProvider.InitiateAuth(ctx, &cognitoidentityprovider.InitiateAuthInput{
+		AuthFlow:       cipTypes.AuthFlowType("REFRESH_TOKEN_AUTH"),
+		ClientId:       aws.String(repo.clientId),
+		AuthParameters: authParams,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (repo userRepo) FetchIdentityCredentials(ctx context.Context, token string) (*cognitoidentity.GetCredentialsForIdentityOutput, error) {
 	getIdOutput, err := repo.cognitoIdentity.GetId(ctx, &cognitoidentity.GetIdInput{
 		IdentityPoolId: aws.String("us-east-1:cbad3db1-4d11-4c9a-9971-208eba32d1e3"),
 		AccountId:      aws.String("725562617987"),

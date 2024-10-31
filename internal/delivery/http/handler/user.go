@@ -12,6 +12,7 @@ type UserHandler interface {
 	SignUpUser(c *fiber.Ctx) error
 	ConfirmUser(c *fiber.Ctx) error
 	SignInUser(c *fiber.Ctx) error
+	FetchIdentityCredentials(c *fiber.Ctx) error
 	AddDevice(c *fiber.Ctx) error
 	ListUserDevices(c *fiber.Ctx) error
 }
@@ -65,6 +66,22 @@ func (h *userHandler) SignInUser(c *fiber.Ctx) error {
 		return err
 	}
 	result, err := h.userRepo.LoginUser(&params, c.Context())
+	if err != nil {
+		return err
+	}
+	return c.JSON(fiber.Map{
+		"status":  true,
+		"message": result,
+	})
+}
+
+func (h *userHandler) FetchIdentityCredentials(c *fiber.Ctx) error {
+	var params model.FetchIdentityCredentialsReq
+	if err := c.BodyParser(&params); err != nil {
+		log.Println(err)
+		return err
+	}
+	result, err := h.userRepo.FetchIdentityCredentials(c.Context(), params.Token)
 	if err != nil {
 		return err
 	}
