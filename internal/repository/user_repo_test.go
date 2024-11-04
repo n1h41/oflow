@@ -55,7 +55,7 @@ func TestSignInUser(t *testing.T) {
 	t.Log(*result.Session)
 }
 
-func TestFetchCredentials(t *testing.T) {
+func TestUserLogin(t *testing.T) {
 	congnitoIdentityProvider, err := awsConfig.GetCognitoIdentityProviderClient()
 	if err != nil {
 		t.Log(err)
@@ -82,7 +82,35 @@ func TestFetchCredentials(t *testing.T) {
 		return
 	}
 
-	userCreds, err := userRepo.FetchIdentityCredentials(context.TODO(), *loginCreds.AuthenticationResult.IdToken)
+	t.Log(*loginCreds)
+
+	/* userCreds, err := userRepo.FetchIdentityCredentials(context.TODO(), *loginCreds.AuthenticationResult.IdToken)
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+		return
+	}
+	t.Log(*userCreds.Credentials.AccessKeyId) */
+}
+
+func TestFetchCredentials(t *testing.T) {
+	congnitoIdentityProvider, err := awsConfig.GetCognitoIdentityProviderClient()
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+		return
+	}
+	cognitoIdentity, err := awsConfig.GetCognitoIdentityClient()
+	if err != nil {
+		t.Log(err)
+		t.Fail()
+		return
+	}
+
+	config := config.Setup()
+	userRepo := NewUserRepo(congnitoIdentityProvider, cognitoIdentity, nil, config.AWS.ClientId, config.AWS.ClientSecret)
+
+	userCreds, err := userRepo.FetchIdentityCredentials(context.TODO(), "eyJraWQiOiJDKzJVRlN0andSYUl0XC8rUEl6SEFvQjljcHp1MmRhdzYzNWo5RWVPT2hoUT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxNGI4OTQ0OC1kMDExLTcwMDEtN2Q4MS03ZmUzMDg1ZTJhOTciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfTThiOTdOd084IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjpmYWxzZSwiY29nbml0bzp1c2VybmFtZSI6IjE0Yjg5NDQ4LWQwMTEtNzAwMS03ZDgxLTdmZTMwODVlMmE5NyIsIm9yaWdpbl9qdGkiOiI2YzliMDRhMi1kNzI4LTQ5ODUtYTA4MC1hNWNkNTIyOTM0OGUiLCJhdWQiOiI1dnJoOTN1NzBzdjhxZ2g5bjZmZzRyaDdsZSIsImN1c3RvbTpsYXN0X25hbWUiOiJBYmR1bGxhIiwiZXZlbnRfaWQiOiJmMGI3ZWRkYS1kODliLTQwYzItODA4NC1jYjNlMGM4YmYxYWYiLCJjdXN0b206Zmlyc3RfbmFtZSI6Ik5paGFsIiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE3MzA0NTEzMDksInBob25lX251bWJlciI6Iis5MTc1NTk4NjUzODYiLCJleHAiOjE3MzA0NTQ5MDksImlhdCI6MTczMDQ1MTMwOSwianRpIjoiNDg4ZTYwODMtMDQ1OS00NDc0LWFkNjUtMzc4MGJhZWU3NDgyIiwiZW1haWwiOiJuaWhhbG5pbnUyNUBnbWFpbC5jb20ifQ.KLRrfcZaGbhJrR85WVAJdWFDI0ZQnqQTzt4YGmhAP0pv3q_V-wg8G5TkIsvLVDA6lsJIjuE-xOsDhn-IrW5BjmrTk6ibg8SIj46lA9FP5N0puc1sLMZW2r8")
 	if err != nil {
 		t.Log(err)
 		t.Fail()
