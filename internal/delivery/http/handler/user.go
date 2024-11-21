@@ -99,7 +99,6 @@ func (h *userHandler) AddDevice(c *fiber.Ctx) error {
 		return err
 	}
 	log.Println(params)
-	// result, err := h.userRepo.AddDevice(c.Context(), params)
 	panic("unimplemented")
 }
 
@@ -119,12 +118,12 @@ func (h *userHandler) AttachIotPolicyToIdentity(c *fiber.Ctx) error {
 		log.Println(err)
 		return err
 	}
-	result, err := h.userRepo.AttachIotPolicyToIdentity(params.IdentityId, c.Context())
+	_, err := h.userRepo.AttachIotPolicyToIdentity(params.IdentityId, c.Context())
 	if err != nil {
 		return err
 	}
 	return c.JSON(fiber.Map{
 		"status":  true,
-		"message": result,
+		"message": "Iot policy attached to identity: " + params.IdentityId,
 	})
 }

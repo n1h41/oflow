@@ -47,6 +47,7 @@ func NewUserRepo(
 		cognitoIdentityProvider: cognitoIdentityPoolClient,
 		cognitoIdentity:         cognitoIdentityClient,
 		dynamoDBClient:          dynamoDBClient,
+		iotClient:               iotClient,
 		clientId:                clientId,
 		clientSecret:            clientSecret,
 	}
@@ -179,7 +180,10 @@ func (repo userRepo) AddDevice(reqParam *model.AddDeviceReq, ctx context.Context
 
 func (repo userRepo) AttachIotPolicyToIdentity(target string, ctx context.Context) (*iot.AttachPolicyOutput, error) {
 	const policyName = "esp_p"
-	result, err := repo.iotClient.AttachPolicy(ctx, &iot.AttachPolicyInput{})
+	result, err := repo.iotClient.AttachPolicy(ctx, &iot.AttachPolicyInput{
+		PolicyName: aws.String(policyName),
+		Target:     aws.String(target),
+	})
 	if err != nil {
 		return nil, err
 	}
