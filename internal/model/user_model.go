@@ -33,3 +33,7 @@ type AddDeviceReq struct {
 type ListUserDevicesReq struct {
 	UserId string `json:"user_id" validate:"required"`
 }
+
+type AttachIOTPolicyReq struct {
+	IdentityId string `json:"identity_id" validate:"required"`
+}

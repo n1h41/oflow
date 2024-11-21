@@ -12,6 +12,7 @@ import (
 	cipTypes "github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider/types"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	dbTypes "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/aws/aws-sdk-go-v2/service/iot"
 )
 
 type UserRepo interface {
@@ -22,12 +23,14 @@ type UserRepo interface {
 	FetchIdentityCredentials(context.Context, string) (*cognitoidentity.GetCredentialsForIdentityOutput, error)
 	FetchDeviceList(*model.ListUserDevicesReq, context.Context) (*dynamodb.ScanOutput, error)
 	AddDevice(*model.AddDeviceReq, context.Context) (*dynamodb.PutItemOutput, error)
+	AttachIotPolicyToIdentity(string, context.Context) (*iot.AttachPolicyOutput, error)
 }
 
 type userRepo struct {
 	cognitoIdentityProvider *cognitoidentityprovider.Client
 	cognitoIdentity         *cognitoidentity.Client
 	dynamoDBClient          *dynamodb.Client
+	iotClient               *iot.Client
 	clientId                string
 	clientSecret            string
 }
@@ -36,6 +39,7 @@ func NewUserRepo(
 	cognitoIdentityPoolClient *cognitoidentityprovider.Client,
 	cognitoIdentityClient *cognitoidentity.Client,
 	dynamoDBClient *dynamodb.Client,
+	iotClient *iot.Client,
 	clientId string,
 	clientSecret string,
 ) UserRepo {
@@ -171,4 +175,13 @@ func (repo userRepo) AddDevice(reqParam *model.AddDeviceReq, ctx context.Context
 		return nil, err
 	}
 	return putItemOutput, nil
+}
+
+func (repo userRepo) AttachIotPolicyToIdentity(target string, ctx context.Context) (*iot.AttachPolicyOutput, error) {
+	const policyName = "esp_p"
+	result, err := repo.iotClient.AttachPolicy(ctx, &iot.AttachPolicyInput{})
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
 }

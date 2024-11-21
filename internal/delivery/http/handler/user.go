@@ -15,6 +15,7 @@ type UserHandler interface {
 	FetchIdentityCredentials(c *fiber.Ctx) error
 	AddDevice(c *fiber.Ctx) error
 	ListUserDevices(c *fiber.Ctx) error
+	AttachIotPolicyToIdentity(c *fiber.Ctx) error
 }
 
 type userHandler struct {
@@ -110,4 +111,20 @@ func (h *userHandler) ListUserDevices(c *fiber.Ctx) error {
 	}
 	log.Println(params)
 	panic("unimplemented")
+}
+
+func (h *userHandler) AttachIotPolicyToIdentity(c *fiber.Ctx) error {
+	var params model.AttachIOTPolicyReq
+	if err := c.BodyParser(&params); err != nil {
+		log.Println(err)
+		return err
+	}
+	result, err := h.userRepo.AttachIotPolicyToIdentity(params.IdentityId, c.Context())
+	if err != nil {
+		return err
+	}
+	return c.JSON(fiber.Map{
+		"status":  true,
+		"message": result,
+	})
 }

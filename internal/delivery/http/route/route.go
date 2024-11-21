@@ -23,11 +23,20 @@ func SetupRoutes(app *fiber.App) {
 	}
 
 	dynamoDBClient, err := aws.GetDynamoDbClient()
+	if err != nil {
+		panic(err)
+	}
+
+	iotClient, err := aws.GetIotClient()
+	if err != nil {
+		panic(err)
+	}
 
 	userRepo := repository.NewUserRepo(
 		cognitoIdentityPoolClient,
 		cognitoIdentityClient,
 		dynamoDBClient,
+		iotClient,
 		config.AWS.ClientId,
 		config.AWS.ClientSecret,
 	)
@@ -41,4 +50,5 @@ func SetupRoutes(app *fiber.App) {
 
 	deviceGroup := app.Group("/device")
 	deviceGroup.Post("/add", userHandler.AddDevice)
+	deviceGroup.Post("/attachPolicy", userHandler.AttachIotPolicyToIdentity)
 }
